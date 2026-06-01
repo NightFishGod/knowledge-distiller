@@ -1,0 +1,107 @@
+# ============================================================
+# 知识蒸馏工具 v2.0 配置文件
+# 针对任何人、任何行业开箱即用，也可根据需要修改
+# ============================================================
+
+# ---- 文件夹自动发现 ----
+discovery:
+  # 搜索根目录（自动扩展当前用户的主目录）
+  search_roots:
+    - "~\\Desktop"
+    - "~\\Documents"
+    - "D:\\"
+    - "E:\\"
+    - "~\\OneDrive"
+  # 排除模式
+  exclude_patterns:
+    - "$Recycle.Bin"
+    - "System Volume Information"
+    - "Windows"
+    - "Program Files"
+    - "Program Files (x86)"
+    - "ProgramData"
+    - "AppData"
+    - "node_modules"
+    - ".git"
+    - "__pycache__"
+    - "Temp"
+    - "cache"
+  # 评分权重（总分 100）
+  weights:
+    file_variety: 25         # 文件类型多样性
+    total_files: 20          # 总文件数
+    recent_activity: 20      # 最近 30 天活动
+    directory_depth: 15      # 有一定目录结构
+    document_ratio: 10       # 文档/设计文件占比
+    image_document_mix: 10   # 图片+文档混合特征
+  # 可选：用户可手动添加搜索提示词（留空则纯结构评分）
+  search_hints: []
+
+# ---- 文件扫描 ----
+scanner:
+  # 关注的扩展名
+  document_exts: [".docx", ".doc", ".pptx", ".ppt", ".xlsx", ".xls", ".pdf", ".txt", ".md", ".csv"]
+  image_exts: [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff", ".tif"]
+  design_exts: [".psd", ".ai", ".sketch", ".fig", ".xd", ".cdr", ".eps"]
+  video_exts: [".mp4", ".avi", ".mov", ".mkv", ".wmv", ".flv", ".webm"]
+  archive_exts: [".zip", ".rar", ".7z", ".tar", ".gz"]
+  code_exts: [".py", ".js", ".ts", ".html", ".css", ".java", ".go", ".rs"]
+  # 忽略的文件/目录
+  ignore_names: [".DS_Store", "Thumbs.db", "~$", ".WeDrive"]
+  # 单文件大小上限 (MB)
+  max_file_mb: 500
+
+# ---- 内容提取 ----
+extraction:
+  # PPT: 是否提取演讲者备注
+  pptx_notes: true
+  # XLSX: 是否读取所有工作表
+  xlsx_all_sheets: true
+  # XLSX: 是否读取批注
+  xlsx_comments: true
+  # DOCX: 是否读取页眉页脚
+  docx_headers_footers: true
+  # 图片: 是否启用 OCR（需额外安装依赖）
+  image_ocr: false
+  # OCR 语言
+  ocr_lang: "chi_sim+eng"
+  # 提取文本最大长度 (字符)
+  max_text_per_file: 50000
+  # 文本提取超时 (秒)
+  timeout_per_file: 30
+
+# ---- 分析配置 ----
+analysis:
+  # 写作风格: 最少需要多少字符才能分析
+  min_chars_for_writing_style: 200
+  # 工作流: 时间聚类间隔 (天)
+  workflow_time_gap_days: 30
+  # 工作流: 最少文件数才算一个阶段
+  workflow_min_files_per_stage: 5
+  # 命名模式检测: 示例数
+  naming_samples: 20
+
+# ---- 工具链检测 ----
+toolchain:
+  # 格式: {工具名: {extensions: [...], 权重}}
+  rules:
+    "Photoshop": {extensions: [".psd"], weight: high}
+    "Illustrator": {extensions: [".ai", ".eps"], weight: high}
+    "Figma / Sketch": {extensions: [".fig", ".sketch"], weight: high}
+    "Microsoft Office / WPS": {extensions: [".docx", ".xlsx", ".pptx", ".doc", ".xls", ".ppt"], weight: high}
+    "Adobe Acrobat": {extensions: [".pdf"], weight: medium}
+    "视频剪辑软件 (PR/剪映/FCPX)": {extensions: [".prproj", ".fcpxml"], weight: medium}
+    "压缩工具": {extensions: [".zip", ".rar", ".7z"], weight: low}
+    "数据分析工具 (Excel/Python/Tableau)": {extensions: [".csv", ".py", ".ipynb", ".twb"], weight: medium}
+    "CAD / 3D 设计": {extensions: [".dwg", ".skp", ".3ds", ".obj", ".stl"], weight: high}
+    "IDE / 代码编辑器": {extensions: [".py", ".js", ".ts", ".java", ".go", ".rs", ".html", ".css", ".vue", ".react"], weight: medium}
+    "Markdown 编辑器": {extensions: [".md"], weight: low}
+    "思维导图": {extensions: [".xmind", ".mm"], weight: medium}
+
+# ---- 报告生成 ----
+report:
+  # 是否生成 HTML 版本
+  html_output: false
+  # 报告文件名模板
+  filename_template: "{person}_知识库_{date}.md"
+（内容由AI生成，仅供参考）

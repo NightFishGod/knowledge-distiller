@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识蒸馏工具 v2.0</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>知识蒸馏 v2.0</h1>
+            <p class="subtitle">通用个人知识提取 — 任何人、任何行业，开箱即用</p>
+        </header>
+
+        <!-- 自动发现 -->
+        <section class="card">
+            <h2>1. 自动发现工作目录</h2>
+            <p class="desc">根据文件结构特征自动评分，无需预设行业关键词</p>
+            <button id="btn-discover" onclick="discover()">开始检索</button>
+            <div id="discover-result" class="result-area hidden"></div>
+        </section>
+
+        <!-- 手动输入 -->
+        <section class="card">
+            <h2>2. 或手动指定目录</h2>
+            <div class="input-row">
+                <input type="text" id="path-input" placeholder="例如: D:\转移\秋茵\ 或 C:\Users\xxx\Desktop\项目\" />
+                <button id="btn-start" onclick="runAll()">开始蒸馏</button>
+            </div>
+        </section>
+
+        <!-- 进度 -->
+        <section id="progress-section" class="card hidden">
+            <h2>蒸馏进度</h2>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <p id="progress-text" class="progress-text"></p>
+        </section>
+
+        <!-- 结果 -->
+        <section id="result-section" class="card hidden">
+            <h2>结果</h2>
+            <div id="result-content"></div>
+        </section>
+
+        <!-- 配置 -->
+        <section class="card">
+            <h2>⚙ 配置信息</h2>
+            <p class="desc">当前 config.yaml 驱动的分析参数。如需调整，直接编辑文件。</p>
+            <pre id="config-display">加载中...</pre>
+        </section>
+    </div>
+
+    <script>
+        let pollTimer = null;
+        const API = '/api';
+
+        async function discover() {
+            const btn = document.getElementById('btn-discover');
+            const result = document.getElementById('discover-result');
+            btn.disabled = true;
+            btn.textContent = '检索中...';
+            result.classList.remove('hidden');
+            result.innerHTML = '<p>正在扫描候选目录...</p>';
+
+            try {
+                const resp = await fetch(API + '/discover', { method: 'POST' });
+                const data = await resp.json();
+                if (data.success && data.candidates.length > 0) {
+                    let html = '<table><tr><th>评分</th><th>目录名</th><th>文件数</th><th>操作</th></tr>';
+                    data.candidates.forEach(c => {
+                        html += `<tr>
+                            <td class="score">${c.total}</td>
+                            <td>${c.name}</td>
+                            <td>${c.files}</td>
+                            <td><a href="javascript:void(0)" onclick="usePath('${c.path.replace(/\\/g,'\\\\')}')">使用此目录</a></td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    result.innerHTML = html;
+                } else {
+                    result.innerHTML = '<p>未找到候选目录。请手动输入路径。</p>';
+                }
+            } catch(e) {
+                result.innerHTML = '<p class="error">检索失败: ' + e.message + '</p>';
+            }
+            btn.disabled = false;
+            btn.textContent = '开始检索';
+        }
+
+        function usePath(path) {
+            document.getElementById('path-input').value = path;
+            // 滚动到输入框
+            document.getElementById('path-input').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function runAll() {
+            const path = document.getElementById('path-input').value.trim();
+            if (!path) {
+                alert('请输入工作目录路径');
+                return;
+            }
+
+            const progress = document.getElementById('progress-section');
+            const result = document.getElementById('result-section');
+            progress.classList.remove('hidden');
+            result.classList.add('hidden');
+
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-start').textContent = '运行中...';
+
+            try {
+                // 启动任务
+                const resp = await fetch(API + '/run-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path })
+                });
+                const data = await resp.json();
+                if (!data.success) {
+                    alert('启动失败: ' + data.error);
+                    resetBtn();
+                    return;
+                }
+                // 轮询进度
+                pollTimer = setInterval(pollStatus, 1000);
+            } catch(e) {
+                alert('启动失败: ' + e.message);
+                resetBtn();
+            }
+        }
+
+        async function pollStatus() {
+            try {
+                const resp = await fetch(API + '/status');
+                const data = await resp.json();
+                updateProgress(data);
+                if (!data.running && (data.stage === '完成' || data.stage === '错误')) {
+                    clearInterval(pollTimer);
+                    resetBtn();
+                    if (data.stage === '完成' && data.result) {
+                        showResult(data.result);
+                    } else if (data.stage === '错误') {
+                        showError(data.message);
+                    }
+                }
+            } catch(e) {
+                clearInterval(pollTimer);
+                resetBtn();
+            }
+        }
+
+        function updateProgress(data) {
+            const fill = document.getElementById('progress-fill');
+            const text = document.getElementById('progress-text');
+            fill.style.width = data.progress + '%';
+            text.textContent = `${data.stage}: ${data.message} (${data.progress}%)`;
+        }
+
+        function showResult(result) {
+            const section = document.getElementById('result-section');
+            const content = document.getElementById('result-content');
+            section.classList.remove('hidden');
+
+            const stats = result.stats || {};
+            content.innerHTML = `
+                <div class="result-card">
+                    <p><strong>知识库已生成</strong></p>
+                    <p>文件: <code>${result.report_name}</code></p>
+                    <p>扫描: ${stats.files || 0} 文件 (${stats.size_gb || 0} GB)</p>
+                    <p>提取: ${stats.extracted || 0} 文件 (${(stats.total_chars || 0).toLocaleString()} 字符)</p>
+                    <p><button onclick="window.open('/api/download?path=${encodeURIComponent(result.report_path)}')">下载知识库</button></p>
+                </div>`;
+        }
+
+        function showError(msg) {
+            const section = document.getElementById('result-section');
+            const content = document.getElementById('result-content');
+            section.classList.remove('hidden');
+            content.innerHTML = `<div class="error-card"><p><strong>执行出错</strong></p><p>${msg}</p></div>`;
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('btn-start');
+            btn.disabled = false;
+            btn.textContent = '开始蒸馏';
+        }
+
+        // 加载配置
+        async function loadConfig() {
+            try {
+                const resp = await fetch(API + '/config');
+                const data = await resp.json();
+                if (data.success) {
+                    document.getElementById('config-display').textContent =
+                        '扫描根目录: ' + (data.config.discovery?.search_roots || []).join(', ') +
+                        '\nOCR: ' + (data.config.extraction?.image_ocr ? '启用' : '禁用') +
+                        '\n评分权重: ' + JSON.stringify(data.config.discovery?.weights || {}, null, 2);
+                }
+            } catch(e) {
+                document.getElementById('config-display').textContent = '加载失败';
+            }
+        }
+
+        loadConfig();
+    </script>
+</body>
+</html>
