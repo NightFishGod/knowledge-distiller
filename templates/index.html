@@ -4,53 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>知识蒸馏工具 v2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <!-- 背景装饰 -->
+    <div class="bg-ambient"></div>
+    <div class="bg-grid"></div>
+
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>知识蒸馏 v2.0</h1>
+            <div class="badge-version">v2.0.0 正式版</div>
+            <h1>知识蒸馏</h1>
             <p class="subtitle">通用个人知识提取 — 任何人、任何行业，开箱即用</p>
         </header>
 
-        <!-- 自动发现 -->
+        <!-- Step 1: 自动发现 -->
         <section class="card">
-            <h2>1. 自动发现工作目录</h2>
-            <p class="desc">根据文件结构特征自动评分，无需预设行业关键词</p>
-            <button id="btn-discover" onclick="discover()">开始检索</button>
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>自动发现工作目录</h2>
+                    <p class="desc">根据文件结构特征自动评分，无需预设行业关键词</p>
+                </div>
+            </div>
+            <button id="btn-discover" class="btn btn--secondary" onclick="discover()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                </svg>
+                开始检索
+            </button>
             <div id="discover-result" class="result-area hidden"></div>
         </section>
 
-        <!-- 手动输入 -->
+        <!-- Step 2: 手动输入 -->
         <section class="card">
-            <h2>2. 或手动指定目录</h2>
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #7c3aed, #a78bfa); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>或手动指定目录</h2>
+                    <p class="desc">直接输入目标文件夹路径，一键完成知识提取</p>
+                </div>
+            </div>
             <div class="input-row">
-                <input type="text" id="path-input" placeholder="例如: D:\转移\秋茵\ 或 C:\Users\xxx\Desktop\项目\" />
-                <button id="btn-start" onclick="runAll()">开始蒸馏</button>
+                <div class="input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <input type="text" id="path-input" placeholder="例如: D:\转移\秋茵\ 或 C:\Users\xxx\Desktop\项目\" />
+                </div>
+                <button id="btn-start" class="btn btn--primary" onclick="runAll()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/>
+                        <path d="m12 5 7 7-7 7"/>
+                    </svg>
+                    开始蒸馏
+                </button>
             </div>
         </section>
 
-        <!-- 进度 -->
-        <section id="progress-section" class="card hidden">
-            <h2>蒸馏进度</h2>
+        <!-- Progress -->
+        <section id="progress-section" class="card progress-section hidden">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4"/>
+                        <path d="m16.2 7.8 2.9-2.9"/>
+                        <path d="M18 12h4"/>
+                        <path d="m16.2 16.2 2.9 2.9"/>
+                        <path d="M12 18v4"/>
+                        <path d="m4.9 19.1 2.9-2.9"/>
+                        <path d="M2 12h4"/>
+                        <path d="m4.9 4.9 2.9 2.9"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>蒸馏进度</h2>
+                    <p class="desc">正在处理中，请稍候...</p>
+                </div>
+            </div>
+            <div class="progress-header">
+                <span id="progress-stage" class="progress-stage">准备中</span>
+                <span id="progress-percent" class="progress-percent">0%</span>
+            </div>
             <div class="progress-bar">
-                <div id="progress-fill" class="progress-fill"></div>
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
             </div>
-            <p id="progress-text" class="progress-text"></p>
+            <p id="progress-text" class="progress-message">
+                <span class="spinner"></span>
+                <span id="progress-msg">正在初始化...</span>
+            </p>
         </section>
 
-        <!-- 结果 -->
+        <!-- Result -->
         <section id="result-section" class="card hidden">
-            <h2>结果</h2>
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #16a34a, #22c55e); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>执行结果</h2>
+                    <p class="desc">蒸馏任务已完成，查看下方详情</p>
+                </div>
+            </div>
             <div id="result-content"></div>
         </section>
 
-        <!-- 配置 -->
-        <section class="card">
-            <h2>⚙ 配置信息</h2>
-            <p class="desc">当前 config.yaml 驱动的分析参数。如需调整，直接编辑文件。</p>
+        <!-- Config -->
+        <section class="card config-section">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #475569, #64748b); box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>配置信息</h2>
+                    <p class="desc">当前 config.yaml 驱动的分析参数。如需调整，直接编辑文件。</p>
+                </div>
+            </div>
             <pre id="config-display">加载中...</pre>
         </section>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: var(--space-6) 0; color: var(--text-muted); font-size: 12px;">
+            <p>知识蒸馏工具 v2.0 — 通用个人知识提取</p>
+        </footer>
     </div>
 
     <script>
@@ -61,45 +161,83 @@
             const btn = document.getElementById('btn-discover');
             const result = document.getElementById('discover-result');
             btn.disabled = true;
-            btn.textContent = '检索中...';
+            btn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                </svg>
+                检索中...
+            `;
             result.classList.remove('hidden');
-            result.innerHTML = '<p>正在扫描候选目录...</p>';
+            result.innerHTML = `
+                <div class="empty-state">
+                    <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto var(--space-3); border-width: 3px;"></div>
+                    <p>正在扫描候选目录...</p>
+                </div>
+            `;
 
             try {
                 const resp = await fetch(API + '/discover', { method: 'POST' });
                 const data = await resp.json();
                 if (data.success && data.candidates.length > 0) {
-                    let html = '<table><tr><th>评分</th><th>目录名</th><th>文件数</th><th>操作</th></tr>';
+                    let html = `
+                        <div class="candidate-table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px">评分</th>
+                                        <th>目录名</th>
+                                        <th style="width: 90px">文件数</th>
+                                        <th style="width: 80px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
                     data.candidates.forEach(c => {
                         html += `<tr>
-                            <td class="score">${c.total}</td>
-                            <td>${c.name}</td>
-                            <td>${c.files}</td>
-                            <td><a href="javascript:void(0)" onclick="usePath('${c.path.replace(/\\/g,'\\\\')}')">使用此目录</a></td>
+                            <td><span class="score">${c.total}</span></td>
+                            <td><span style="color: var(--text-primary); font-weight: 500;">${c.name}</span><br><span style="font-size: 11px; color: var(--text-muted);">${c.path}</span></td>
+                            <td style="font-variant-numeric: tabular-nums;">${c.files}</td>
+                            <td><a href="javascript:void(0)" class="path-link" onclick="usePath('${c.path.replace(/\\/g,'\\\\')}')">使用</a></td>
                         </tr>`;
                     });
-                    html += '</table>';
+                    html += '</tbody></table></div>';
                     result.innerHTML = html;
                 } else {
-                    result.innerHTML = '<p>未找到候选目录。请手动输入路径。</p>';
+                    result.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.3-4.3"/>
+                            </svg>
+                            <p>未找到候选目录，请手动输入路径</p>
+                        </div>
+                    `;
                 }
             } catch(e) {
-                result.innerHTML = '<p class="error">检索失败: ' + e.message + '</p>';
+                result.innerHTML = `<p class="error-text">检索失败: ${e.message}</p>`;
             }
             btn.disabled = false;
-            btn.textContent = '开始检索';
+            btn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                </svg>
+                重新检索
+            `;
         }
 
         function usePath(path) {
             document.getElementById('path-input').value = path;
-            // 滚动到输入框
-            document.getElementById('path-input').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('path-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('path-input').focus();
         }
 
         async function runAll() {
             const path = document.getElementById('path-input').value.trim();
             if (!path) {
-                alert('请输入工作目录路径');
+                showToast('请输入工作目录路径');
+                document.getElementById('path-input').focus();
                 return;
             }
 
@@ -109,10 +247,19 @@
             result.classList.add('hidden');
 
             document.getElementById('btn-start').disabled = true;
-            document.getElementById('btn-start').textContent = '运行中...';
+            document.getElementById('btn-start').innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite">
+                    <path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/>
+                    <path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/>
+                    <path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/>
+                    <path d="m4.9 4.9 2.9 2.9"/>
+                </svg>
+                运行中...
+            `;
+
+            progress.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             try {
-                // 启动任务
                 const resp = await fetch(API + '/run-all', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -120,14 +267,13 @@
                 });
                 const data = await resp.json();
                 if (!data.success) {
-                    alert('启动失败: ' + data.error);
+                    showToast('启动失败: ' + data.error);
                     resetBtn();
                     return;
                 }
-                // 轮询进度
-                pollTimer = setInterval(pollStatus, 1000);
+                pollTimer = setInterval(pollStatus, 800);
             } catch(e) {
-                alert('启动失败: ' + e.message);
+                showToast('启动失败: ' + e.message);
                 resetBtn();
             }
         }
@@ -154,9 +300,14 @@
 
         function updateProgress(data) {
             const fill = document.getElementById('progress-fill');
-            const text = document.getElementById('progress-text');
+            const stage = document.getElementById('progress-stage');
+            const percent = document.getElementById('progress-percent');
+            const msg = document.getElementById('progress-msg');
+
             fill.style.width = data.progress + '%';
-            text.textContent = `${data.stage}: ${data.message} (${data.progress}%)`;
+            stage.textContent = data.stage;
+            percent.textContent = data.progress + '%';
+            msg.textContent = data.message || '处理中...';
         }
 
         function showResult(result) {
@@ -167,25 +318,117 @@
             const stats = result.stats || {};
             content.innerHTML = `
                 <div class="result-card">
-                    <p><strong>知识库已生成</strong></p>
-                    <p>文件: <code>${result.report_name}</code></p>
-                    <p>扫描: ${stats.files || 0} 文件 (${stats.size_gb || 0} GB)</p>
-                    <p>提取: ${stats.extracted || 0} 文件 (${(stats.total_chars || 0).toLocaleString()} 字符)</p>
-                    <p><button onclick="window.open('/api/download?path=${encodeURIComponent(result.report_path)}')">下载知识库</button></p>
-                </div>`;
+                    <div class="result-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6 9 17l-5-5"/>
+                        </svg>
+                        知识库已生成
+                    </div>
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">文件名</div>
+                            <div class="stat-value" style="font-size: 14px;"><code>${result.report_name}</code></div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">扫描文件</div>
+                            <div class="stat-value">${stats.files || 0}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">数据量</div>
+                            <div class="stat-value">${stats.size_gb || 0} GB</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">提取文件</div>
+                            <div class="stat-value">${stats.extracted || 0}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">总字符</div>
+                            <div class="stat-value">${(stats.total_chars || 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <button class="btn btn--success" onclick="window.open('/api/download?path=${encodeURIComponent(result.report_path)}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        下载知识库
+                    </button>
+                </div>
+            `;
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function showError(msg) {
             const section = document.getElementById('result-section');
             const content = document.getElementById('result-content');
             section.classList.remove('hidden');
-            content.innerHTML = `<div class="error-card"><p><strong>执行出错</strong></p><p>${msg}</p></div>`;
+            content.innerHTML = `
+                <div class="error-card">
+                    <div class="error-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        执行出错
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 13px;">${msg}</p>
+                </div>
+            `;
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function resetBtn() {
             const btn = document.getElementById('btn-start');
             btn.disabled = false;
-            btn.textContent = '开始蒸馏';
+            btn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/>
+                    <path d="m12 5 7 7-7 7"/>
+                </svg>
+                开始蒸馏
+            `;
+        }
+
+        // 轻提示
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 32px;
+                left: 50%;
+                transform: translateX(-50%) translateY(20px);
+                background: var(--bg-elevated);
+                border: 1px solid var(--border-default);
+                color: var(--text-secondary);
+                padding: 12px 24px;
+                border-radius: var(--radius-md);
+                font-size: 13px;
+                font-weight: 500;
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                opacity: 0;
+                transition: all 0.3s var(--ease-out);
+                pointer-events: none;
+            `;
+            document.body.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+            });
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         // 加载配置
@@ -194,13 +437,14 @@
                 const resp = await fetch(API + '/config');
                 const data = await resp.json();
                 if (data.success) {
+                    const roots = (data.config.discovery?.search_roots || []).join(', ') || '未配置';
+                    const ocr = data.config.extraction?.image_ocr ? '已启用' : '已禁用';
+                    const weights = JSON.stringify(data.config.discovery?.weights || {}, null, 2);
                     document.getElementById('config-display').textContent =
-                        '扫描根目录: ' + (data.config.discovery?.search_roots || []).join(', ') +
-                        '\nOCR: ' + (data.config.extraction?.image_ocr ? '启用' : '禁用') +
-                        '\n评分权重: ' + JSON.stringify(data.config.discovery?.weights || {}, null, 2);
+                        `扫描根目录: ${roots}\nOCR 识别: ${ocr}\n评分权重:\n${weights}`;
                 }
             } catch(e) {
-                document.getElementById('config-display').textContent = '加载失败';
+                document.getElementById('config-display').textContent = '配置加载失败';
             }
         }
 
